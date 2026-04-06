@@ -1,0 +1,120 @@
+###register user
+POST http://localhost:3000/user-api/users
+Content-Type: application/json
+
+{
+    "firstName":"Roronoa",
+    "lastName":"Zoro",
+    "email":"Zoro@gmail.com",
+    "password":"Zoro123",
+    "profileImageUrl":"http://example.com/profile.jpg"
+    }
+
+
+###authenticate user
+POST http://localhost:3000/common-api/authenticate
+Content-Type: application/json
+
+{
+    "email":"Zoro@gmail.com",
+    "password":"Zoro123",
+    "role":"USER"
+    }
+
+
+###register author
+POST http://localhost:3000/author-api/users
+Content-Type: application/json
+
+{
+    "firstName":"Monkey D",
+    "lastName":"Luffy",
+    "email":"luffy@gmail.com",
+    "password":"luffy123",
+    "profileImageUrl":"http://example.com/profile.jpg"
+    
+    }
+
+###read all articles for user
+GET http://localhost:3000/user-api/articles
+
+###add comment to an article
+PUT http://localhost:3000/user-api/articles
+Content-Type: application/json
+
+{
+    "user":"69ae866773db3dd39429025d",
+    "articleId":"69ae875a73db3dd39429026a",
+    "comment":"Great article!"
+
+}
+
+###logout user before author flow
+GET http://localhost:3000/common-api/logout
+
+###author login
+POST http://localhost:3000/common-api/authenticate
+Content-Type: application/json
+
+{
+    "email": "luffy@gmail.com",
+    "password": "luffy123",
+    "role": "AUTHOR"
+}
+
+###create article(author)
+POST http://localhost:3000/author-api/articles
+Content-Type: application/json
+
+{
+    "author":"69ae868c73db3dd394290264",
+    "title":"JAVA Basics",
+    "category":"Programming",
+    "content":"JAva hiwdsiob"
+}
+
+###read all articles for author 
+GET http://localhost:3000/author-api/articles/69ae868c73db3dd394290264
+
+
+###update article
+PUT http://localhost:3000/author-api/articles
+Content-Type: application/json
+
+{
+    "author":"69ae868c73db3dd394290264",
+    "articleId":"REPLACE_WITH_CREATED_ARTICLE_ID",
+    "category":"Programming",
+    "title":"Updated JavaScript Basics",
+    "content":"Updated content for JavaScript basics"
+}
+
+###soft delete article  
+PATCH http://localhost:3000/author-api/articles/69ae875a73db3dd39429026a/status
+Content-Type: application/json
+
+{
+    "isArticleActive":true
+}   
+
+
+###logout 
+GET http://localhost:3000/common-api/logout
+
+###invalid path
+GET http://localhost:3000/author-api/test
+
+###admin block user
+PUT http://localhost:3000/admin-api/users/698abc45bffea77584aaf99a/block
+
+###admin unblock user
+PUT http://localhost:3000/admin-api/users/698abc45bffea77584aaf99a/unblock
+
+###change password
+PUT http://localhost:3000/common-api/change-password
+Content-Type: application/json
+
+{
+    "currentPassword":"test123",
+    "newPassword":"test456"
+}
