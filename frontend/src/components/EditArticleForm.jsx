@@ -51,7 +51,7 @@ function EditArticle() {
     try {
       setLoading(true);
       await axios.put(
-        "http://localhost:3000/author-api/articles",
+        `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/author-api/articles`,
         {
           articleId: id,
           title: data.title,

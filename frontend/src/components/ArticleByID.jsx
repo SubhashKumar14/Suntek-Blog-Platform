@@ -48,7 +48,7 @@ function ArticleByID() {
       }
 
       try {
-        const res = await axios.get(`http://localhost:3000/user-api/article/${id}`, { withCredentials: true });
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000"}`}/user-api/article/${id}`, { withCredentials: true });
 
         setArticle(res.data.payload);
       } catch (err) {
@@ -77,7 +77,7 @@ function ArticleByID() {
   const deleteArticle = async () => {
     try {
       await axios.patch(
-        `http://localhost:3000/author-api/articles/${id}/status`,
+        `${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000"}`}/author-api/articles/${id}/status`,
         { isArticleActive: false },
         { withCredentials: true }
       );
@@ -105,7 +105,7 @@ function ArticleByID() {
     try {
       setCommentSubmitting(true);
       const res = await axios.post(
-        `http://localhost:3000/user-api/articles/${id}/comments`,
+        `${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000"}`}/user-api/articles/${id}/comments`,
         { comment: trimmedComment },
         { withCredentials: true }
       );

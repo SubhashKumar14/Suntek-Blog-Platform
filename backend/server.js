@@ -14,7 +14,7 @@ config() //process.env
 const app=exp()
 //add cors middleware
 app.use(cors({
-    origin:"http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials:true
 }))
 //add body parser middleware
@@ -32,7 +32,8 @@ const connectDB=async()=>{
     await connect(process.env.DB_URL)
     console.log("DB connection success")
     //start server
-    app.listen(process.env.PORT,()=>console.log("server listening on 3000"))
+    const port = process.env.PORT || 3000;
+    app.listen(port,()=>console.log(`server listening on ${port}`))
     }catch(err){
         console.log("DB connection failed",err)
     }

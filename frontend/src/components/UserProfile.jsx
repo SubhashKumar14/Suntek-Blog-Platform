@@ -27,7 +27,7 @@ function UserProfile() {
     const getArticles = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:3000/user-api/articles", { withCredentials: true });
+        const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/user-api/articles`, { withCredentials: true });
 
         setArticles(res.data.payload);
       } catch (err) {
