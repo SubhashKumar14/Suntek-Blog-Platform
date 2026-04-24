@@ -1,7 +1,7 @@
 import { useAuth } from "../store/authStore";
 import { useNavigate } from "react-router";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import { api } from "../lib/apiClient";
 import { useEffect, useState } from "react";
 
 import {
@@ -27,11 +27,11 @@ function UserProfile() {
     const getArticles = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/user-api/articles`, { withCredentials: true });
+        const res = await api.get("/user-api/articles");
 
         setArticles(res.data.payload);
       } catch (err) {
-        setError(err.response?.data?.error || "Something went wrong");
+        setError(err.response?.data?.message || "Something went wrong");
       } finally {
         setLoading(false);
       }
@@ -76,7 +76,7 @@ function UserProfile() {
               {/* Top Content */}
               <p className="text-[0.65rem] font-semibold text-[#0066cc] uppercase tracking-widest w-fit">{articleObj.category}</p>
               <p className={articleTitle}>{articleObj.title}</p>
-              <p className="text-sm text-[#6e6e73] leading-relaxed flex-grow">{articleObj.content.slice(0, 60)}...</p>
+              <p className="text-sm text-[#6e6e73] leading-relaxed grow">{articleObj.content.slice(0, 60)}...</p>
               <p className={timestampClass}>{formatDateIST(articleObj.createdAt)}</p>
 
               {/* Button at bottom */}

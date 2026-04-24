@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../lib/apiClient";
 import { useNavigate } from "react-router";
 import { useAuth } from "../store/authStore";
 
@@ -30,12 +30,12 @@ function AuthorArticles() {
       setLoading(true);
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000"}`}/author-api/articles/${user._id}`, { withCredentials: true });
+        const res = await api.get(`/author-api/articles/${user._id}`);
 
         setArticles(res.data.payload);
       } catch (err) {
         console.log(err);
-        setError(err.response?.data?.error || "Failed to fetch articles");
+        setError(err.response?.data?.message || "Failed to fetch articles");
       } finally {
         setLoading(false);
       }
@@ -71,7 +71,7 @@ function AuthorArticles() {
           <div className="flex flex-col gap-2 h-full">
             <p className="text-[0.65rem] font-semibold text-[#0066cc] uppercase tracking-widest w-fit">{article.category}</p>
             <p className={articleTitle}>{article.title}</p>
-            <p className={`${articleExcerpt} flex-grow`}>{article.content.slice(0, 60)}...</p>
+            <p className={`${articleExcerpt} grow`}>{article.content.slice(0, 60)}...</p>
             <p className={articleMeta}>{formatDate(article.createdAt)}</p>
           </div>
 

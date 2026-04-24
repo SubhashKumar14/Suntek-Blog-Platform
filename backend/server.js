@@ -12,15 +12,48 @@ import { commonRouter } from './APIs/commonApi.js'
 config() //process.env
 //create express application
 const app=exp()
+
+const defaultAllowedOrigins = ["http://localhost:5173"];
+const configuredOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.FRONTEND_URLS ? process.env.FRONTEND_URLS.split(",") : []),
+]
+  .map((origin) => origin?.trim())
+  .filter(Boolean);
+const allowedOrigins = new Set([...defaultAllowedOrigins, ...configuredOrigins]);
+const allowVercelPreviews = process.env.ALLOW_VERCEL_PREVIEWS === "true";
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (allowedOrigins.has(origin)) return true;
+  if (!allowVercelPreviews) return false;
+
+  try {
+    return new URL(origin).hostname.endsWith(".vercel.app");
+  } catch {
+    return false;
+  }
+};
+
 //add cors middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials:true
 }))
 //add body parser middleware
 app.use(exp.json())
 //add cookie parser middleware
 app.use(cookieParser())
+
+app.get('/health',(req,res)=>{
+    res.status(200).json({message:'ok'})
+})
+
 //connect APIs
 app.use('/user-api',userRoute)
 app.use('/author-api',authorRoute)
@@ -54,13 +87,18 @@ app.post("/logout",(req,res)=>{
 
 
 //dealing with invalid path
-app.use((req,res,next)=>{
+app.use((req,res)=>{
     console.log(req.url)
-    res.json({message:req.url+" is invalid path"})
+    res.status(404).json({message:req.url+" is invalid path"})
 })
 
 //add error handling middleware
 app.use((err, req, res, next) => {
+  if (err.message === "Not allowed by CORS") {
+    return res.status(403).json({
+      message: err.message,
+    });
+  }
   // Mongoose validation error
   if (err.name === "ValidationError") {
     return res.status(400).json({

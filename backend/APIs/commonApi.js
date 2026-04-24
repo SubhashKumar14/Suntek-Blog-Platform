@@ -8,6 +8,14 @@ import { config } from 'dotenv'
 export const commonRouter=exp.Router()
 config();
 
+const isProduction = process.env.NODE_ENV === "production";
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
+    path: "/",
+};
+
 //login 
 commonRouter.post("/authenticate",async(req,res)=>{
     //authenticate author(public)
@@ -17,13 +25,7 @@ commonRouter.post("/authenticate",async(req,res)=>{
         //call authenticate service
         let {token,user}=await authenticate(userCred);
         //save token in cookie
-        res.cookie("token",token,
-            {
-                httpOnly:true,
-                sameSite:"lax",
-                secure:false,
-                
-            });
+        res.cookie("token",token,cookieOptions);
         //send response
         res.status(200).json({message:"login success",payload:user});
     })
@@ -53,12 +55,7 @@ commonRouter.get("/check-auth", async (req, res) => {
 commonRouter.get("/logout",async(req,res)=>{
     //logout for user author,and admin
     //clear the cookie named 'token'
-    res.clearCookie("token",
-    {
-        httpOnly:true,//must match original settings
-        sameSite:"lax",//must match original settings
-        secure:false,//must match original settings
-    });
+    res.clearCookie("token",cookieOptions);
     res.status(200).json({message:"logout success"});
     })
 
@@ -80,11 +77,4 @@ commonRouter.put("/change-password",verifyToken(),async(req,res)=>{
     await user.save();
     //send response
     res.status(200).json({message:"password changed successfully"});
-})
-//page refresh check auth
-commonRouter.get("/check-auth",verifyToken("USER","AUTHOR","ADMIN"),(req,res)=>{
-    res.status(200).json({
-        message:"authenticated",
-        payload:req.user
-    })
 })

@@ -1,6 +1,6 @@
 import { useParams, useLocation, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../lib/apiClient";
 import { useAuth } from "../store/authStore";
 
 import {
@@ -48,7 +48,7 @@ function ArticleByID() {
       }
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000"}`}/user-api/article/${id}`, { withCredentials: true });
+        const res = await api.get(`/user-api/article/${id}`);
 
         setArticle(res.data.payload);
       } catch (err) {
@@ -76,15 +76,14 @@ function ArticleByID() {
   // delete article
   const deleteArticle = async () => {
     try {
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000"}`}/author-api/articles/${id}/status`,
+      await api.patch(
+        `/author-api/articles/${id}/status`,
         { isArticleActive: false },
-        { withCredentials: true }
       );
 
       navigate("/author-profile");
     } catch (err) {
-      setError(err.response?.data?.error);
+      setError(err.response?.data?.message);
     }
   };
 
@@ -104,10 +103,9 @@ function ArticleByID() {
 
     try {
       setCommentSubmitting(true);
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || "http://localhost:3000"}`}/user-api/articles/${id}/comments`,
+      const res = await api.post(
+        `/user-api/articles/${id}/comments`,
         { comment: trimmedComment },
-        { withCredentials: true }
       );
 
       setArticle(res.data.payload);

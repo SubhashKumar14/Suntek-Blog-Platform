@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import { api } from "../lib/apiClient";
 
 export const useAuth = create((set) => ({
   currentUser: null,
@@ -11,7 +11,7 @@ export const useAuth = create((set) => ({
       //set loading true
       set({ loading: true, error: null });
       //make api call
-      let res = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/common-api/authenticate`, userCredWithRole, { withCredentials: true });
+      const res = await api.post("/common-api/authenticate", userCredWithRole);
       // console.log("res is ", res);
       //update state
       set({
@@ -26,7 +26,7 @@ export const useAuth = create((set) => ({
         isAuthenticated: false,
         currentUser: null,
         //error: err,
-        error: err.response?.data?.error || "Login failed",
+        error: err.response?.data?.message || "Login failed",
       });
     }
   },
@@ -35,7 +35,7 @@ export const useAuth = create((set) => ({
       //set loading state
       set({ loading: true, error: null });
       //make logout api req
-      await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/common-api/logout`, { withCredentials: true });
+      await api.get("/common-api/logout");
       //update state
       set({
         loading: false,
@@ -47,7 +47,7 @@ export const useAuth = create((set) => ({
         loading: false,
         isAuthenticated: false,
         currentUser: null,
-        error: err.response?.data?.error || "Logout failed",
+        error: err.response?.data?.message || "Logout failed",
       });
     }
   },
@@ -55,8 +55,17 @@ export const useAuth = create((set) => ({
   checkAuth: async () => {
     try {
       set({ loading: true });
-      const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:3000"}/common-api/check-auth`, { withCredentials: true });
-      
+      const res = await api.get("/common-api/check-auth");
+
+      if (!res.data?.authenticated) {
+        set({
+          currentUser: null,
+          isAuthenticated: false,
+          loading: false,
+        });
+        return;
+      }
+
       set({
         currentUser: res.data.payload,
         isAuthenticated: true,
@@ -75,7 +84,11 @@ export const useAuth = create((set) => ({
 
       // other errors
       console.error("Auth check failed:", err);
-      set({ loading: false });
+      set({
+        currentUser: null,
+        isAuthenticated: false,
+        loading: false,
+      });
     }
   },
 }));

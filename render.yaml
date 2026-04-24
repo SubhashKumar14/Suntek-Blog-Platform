@@ -5,6 +5,7 @@ services:
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,6 +15,10 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
+      - key: FRONTEND_URLS
+        sync: false
+      - key: ALLOW_VERCEL_PREVIEWS
+        value: "false"
       - key: JWT_SECRET
         sync: false
       - key: CLOUDINARY_CLOUD_NAME

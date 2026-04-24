@@ -9,8 +9,8 @@ export const verifyToken=(...allowedRoles)=>{
     try{
     const token=req.cookies.token
     console.log("token:",token)
-    if(token===undefined){
-        return res.status(400).json({message:"unauthorized req plz login"});
+    if(!token){
+        return res.status(401).json({message:"unauthorized req plz login"});
     }
     //console.log("token in verify token middleware",token)
     //verify the validity of token

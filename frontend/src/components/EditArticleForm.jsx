@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../lib/apiClient";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../store/authStore";
 
@@ -50,8 +50,8 @@ function EditArticle() {
 
     try {
       setLoading(true);
-      await axios.put(
-        `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/author-api/articles`,
+      await api.put(
+        "/author-api/articles",
         {
           articleId: id,
           title: data.title,
@@ -59,7 +59,6 @@ function EditArticle() {
           content: data.content,
           author: authorId,
         },
-        { withCredentials: true }
       );
 
       toast.success("Article updated successfully");
