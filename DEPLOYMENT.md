@@ -36,6 +36,7 @@ Set Vercel project root directory to:
 Add frontend env var in Vercel:
 
 - `VITE_API_URL=https://<your-render-service>.onrender.com`
+- Add this env var in both `Production` and `Preview` environments.
 
 `vercel.json` already includes SPA rewrite to `index.html`.
 
